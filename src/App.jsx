@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Affiche from "./pages/Affiche.jsx";
-import Action from "./pages/Action.jsx";
+import Classes from "./pages/Classes.jsx";
 import Detail from "./pages/Detail.jsx";
 
 export default function App() {
@@ -10,7 +10,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/affiche" element={<Affiche />} />
-        <Route path="/action" element={<Action />} />
+        <Route path="/classes" element={<Classes />} />
         <Route path="/detail/:id" element={<Detail />} />
       </Routes>
     </div>

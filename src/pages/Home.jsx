@@ -4,15 +4,16 @@ import { Link } from "react-router-dom";
 export default function Home() {
   const [apiData, setApiData] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(currentPage);
+  }, [currentPage]);
 
-  async function fetchData() {
+  async function fetchData(page) {
     try {
       const response = await fetch(
-        "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=fr-FR&page=1&sort_by=popularity.desc",
+        `https://api.themoviedb.org/3/movie/now_playing?language=fr-FR&page=${page}`,
         {
           method: "GET",
           headers: {
@@ -30,6 +31,9 @@ export default function Home() {
         error
       );
     }
+  }
+  function handleNextPage() {
+    setCurrentPage(currentPage + 1);
   }
 
   return (
@@ -73,10 +77,10 @@ export default function Home() {
             </div>
             <div className="">
               <Link
-                to="/action"
+                to="/classes"
                 className="block lg:inline-block text-white hover:text-gray-300"
               >
-                action
+                Film classés
               </Link>
             </div>
           </div>
@@ -107,6 +111,51 @@ export default function Home() {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="flex justify-center mt-4">
+        {currentPage > 1 && (
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className="text-white flex direction-row mr-2"
+          >
+            <svg
+              className="w-8 h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            <p className="flex justify-center text-white">Page précédente</p>
+          </button>
+        )}
+        <button
+          onClick={handleNextPage}
+          className="text-white flex direction-row"
+        >
+          <p className="flex justify-center text-white">Page suivante</p>
+          <svg
+            className="w-8 h-8"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>{" "}
       </div>
     </>
   );
