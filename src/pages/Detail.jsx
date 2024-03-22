@@ -58,38 +58,52 @@ export default function Detail() {
 
       <div className="ml-8">
         <div className="">
-          <p className="text-red-800">Genre : </p>
+          <p className="text-lg font-semibold text-white">Date de sortie : </p>
+          <p className="text-gray-300">{movie.release_date}</p>
+        </div>
+        <br />
+        <div className="">
+          <p className="text-lg font-semibold text-white">Genre : </p>
+
           {movie.genres &&
             movie.genres.map((genre) => (
-              <p key={genre.id} className="text-white">
+              <p key={genre.id} className="text-gray-300">
                 {genre.name}
               </p>
             ))}
         </div>
         <br />
-        <div className="text-red-800">
-          <p>Synopsis :</p>
-          <p className="text-white">{movie.overview}</p>
+        <div className="">
+          <p className="text-lg font-semibold text-white">Synopsis :</p>
+          <p className="text-gray-300">{movie.overview}</p>
         </div>
         <br />
-        <div className="text-red-800">
-          <p>lien:</p>
-          <a href={movie.homepage} className="text-white">
+        <div className="">
+          <p className="text-lg font-semibold text-white">lien:</p>
+          <a href={movie.homepage} className="text-gray-300">
             {movie.homepage}
           </a>
         </div>
         <br />
-        <div className="text-red-800">
-          <p>Compagnie de production :</p>
+        <div className="">
+          <p className="text-lg font-semibold text-white">
+            Compagnie de production :
+          </p>
           {movie.production_companies && movie.production_companies[1] && (
-            <p className="text-white">{movie.production_companies[1].name}</p>
+            <p className="text-gray-300">
+              {movie.production_companies[1].name}
+            </p>
           )}
         </div>
         <br />
-        <div className="text-red-800 mb-6 ">
-          <p>Pays de production:</p>
+        <div className=" ">
+          <p className="text-lg font-semibold text-white">
+            Pays de production:
+          </p>
           {movie.production_countries && movie.production_countries[0] && (
-            <p className="text-white">{movie.production_countries[0].name}</p>
+            <p className="text-gray-300">
+              {movie.production_countries[0].name}
+            </p>
           )}
         </div>
       </div>
