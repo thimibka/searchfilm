@@ -5,7 +5,8 @@ export default function Home() {
   const [apiData, setApiData] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
     fetchData(currentPage);
     window.scrollTo(0, 0);
@@ -41,7 +42,44 @@ export default function Home() {
       setCurrentPage(currentPage - 1);
     }
   }
-
+  function handleSearchChange(event) {
+    setSearchTerm(event.target.value);
+  }
+  // async function handleSearchSubmit(event) {
+  //   event.preventDefault();
+  //   const allMovies = await fetchAllMovies();
+  //   setSearchQuery(searchTerm);
+  //   setApiData(allMovies);
+  // }
+  async function handleSearchSubmit(event) {
+    event.preventDefault();
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/search/movie?language=fr-FR&query=${searchTerm}&page=1&include_adult=false`,
+        {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNDliZjk3MjViYTcyYWI4Mzk0NzIxODBmY2Q4M2EwZSIsInN1YiI6IjY1ZjM0ZWRlNmRlYTNhMDEyZjc4NTY4ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.QDsTVi9bnC5wV_30oRkMQwXqVGnUDqSYYapGfK5iQFY",
+          },
+        }
+      );
+      const data = await response.json();
+      setApiData(data.results);
+      setSearchQuery(searchTerm);
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération des données de l'API pour la recherche:",
+        error
+      );
+    }
+  }
+  const filteredMovies = apiData.filter(
+    (movie) =>
+      movie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      movie.release_date.includes(searchQuery)
+  );
   return (
     <>
       <div className="flex justify-between items-center bg-gray-800 p-4">
@@ -73,27 +111,22 @@ export default function Home() {
           className={`lg:flex lg:items-center ${menuOpen ? "block" : "hidden"}`}
         >
           <div className="flex flex-col lg:flex-row lg:space-x-4">
-            <div className="">
-              <Link
-                to="/affiche"
-                className="block lg:inline-block text-white hover:text-gray-300"
-              >
-                à l'affiche
-              </Link>
-            </div>
-            <div className="">
-              <Link
-                to="/classes"
-                className="block lg:inline-block text-white hover:text-gray-300"
-              >
-                Film classés
-              </Link>
+            <div>
+              <form onSubmit={handleSearchSubmit}>
+                <input
+                  type="text"
+                  placeholder="Rechercher..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="px-2 py-1 border border-gray-600 rounded text-gray-800 focus:outline-none"
+                />
+              </form>
             </div>
           </div>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-3 overflow-y-auto">
-        {apiData.map((movie) => (
+        {filteredMovies.map((movie) => (
           <div
             key={movie.id}
             className="flex flex-col bg-gray-900 text-white rounded overflow-hidden"
