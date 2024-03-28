@@ -8,6 +8,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchData(currentPage);
+    window.scrollTo(0, 0);
   }, [currentPage]);
 
   async function fetchData(page) {
@@ -34,6 +35,11 @@ export default function Home() {
   }
   function handleNextPage() {
     setCurrentPage(currentPage + 1);
+  }
+  function handlePreviousPage() {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   }
 
   return (
@@ -113,6 +119,9 @@ export default function Home() {
         ))}
       </div>
 
+      <div className="flex justify-center">
+        <p className="text-white"> Page {currentPage}</p>
+      </div>
       <div className="flex justify-center mt-4">
         {currentPage > 1 && (
           <button
