@@ -79,13 +79,6 @@ export default function Detail() {
         </div>
         <br />
         <div className="">
-          <p className="text-lg font-semibold text-white">lien:</p>
-          <a href={movie.homepage} className="text-gray-300">
-            {movie.homepage}
-          </a>
-        </div>
-        <br />
-        <div className="">
           <p className="text-lg font-semibold text-white">
             Compagnie de production :
           </p>
