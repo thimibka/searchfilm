@@ -8,7 +8,7 @@ export default function Nav({ searchQuery, onSearchChange, onSearchSubmit }) {
   return (
     <div className="flex justify-between items-center bg-gray-800 p-4">
       <button className="text-white text-2xl font-bold" onClick={menu}>
-        Mon Application
+        Menu
       </button>
       <form onSubmit={onSearchSubmit}>
         <input

@@ -64,7 +64,9 @@ export default function Detail() {
   return (
     <div className=" grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 bg-gray-900  ">
       <div className="flex justify-center">
-        <p className="text-lg font-semibold text-white">{movie.title}</p>
+        <p className="text-lg font-semibold text-red-600 mt-6 font-[1000]">
+          {movie.title}
+        </p>
       </div>
       <div className="mb-2">
         {movie.poster_path && (
@@ -77,16 +79,18 @@ export default function Detail() {
         )}
       </div>
 
-      <p className="text-gray-400 flex justify-center">{movie.tagline}</p>
+      <h1 className="text-red-600 flex justify-center font-[1000] mb-8">
+        {movie.tagline}
+      </h1>
 
       <div className="ml-8">
         <div className="">
-          <p className="text-lg font-semibold text-white">Date de sortie : </p>
+          <p className="text-lg font-semibold text-white text-red-600 font-[1000]">Date de sortie : </p>
           <p className="text-gray-300">{movie.release_date}</p>
         </div>
         <br />
         <div className="">
-          <p className="text-lg font-semibold text-white">Genre : </p>
+          <p className="text-lg font-semibold text-white text-red-600 font-[1000]">Genre : </p>
 
           {movie.genres &&
             movie.genres.map((genre) => (
@@ -97,12 +101,12 @@ export default function Detail() {
         </div>
         <br />
         <div className="">
-          <p className="text-lg font-semibold text-white">Synopsis :</p>
-          <p className="text-gray-300">{movie.overview}</p>
+          <p className="text-lg font-semibold text-white text-red-600 font-[1000]">Synopsis :</p>
+          <p className="text-gray-300 me-8">{movie.overview}</p>
         </div>
         <br />
         <div className="">
-          <p className="text-lg font-semibold text-white">
+          <p className="text-lg font-semibold text-white text-red-600 font-[1000]">
             Compagnie de production :
           </p>
           {movie.production_companies && movie.production_companies[1] && (
@@ -113,7 +117,7 @@ export default function Detail() {
         </div>
         <br />
         <div className=" ">
-          <p className="text-lg font-semibold text-white">
+          <p className="text-lg font-semibold text-white text-red-600 font-[1000]">
             Pays de production:
           </p>
           {movie.production_countries && movie.production_countries[0] && (
@@ -122,16 +126,22 @@ export default function Detail() {
             </p>
           )}
         </div>
-        <div className="">
-          <p className="text-lg font-semibold text-white">Trailer : </p>
+        <div className="mb-[50px] me-[30px]">
+          <p className="text-lg font-semibold text-white text-red-600 font-[1000]">Trailer : </p>
           {trailer ? (
-            <div className="mt-4">
-              <ReactPlayer
-                url={`https://www.youtube.com/watch?v=${trailer.key}`}
-                controls
-                width="100%"
-                height="1000px"
-              />
+            <div className="aspect-w-16 aspect-h-9">
+              <div className="relative pt-[56.25%]">
+                {" "}
+                {/* 16:9 aspect ratio */}
+                <ReactPlayer
+                  url={`https://www.youtube.com/watch?v=${trailer.key}`}
+                  controls
+                  width="100%"
+                  height="100%"
+                  className="absolute top-0 left-0"
+                  style={{ aspectRatio: "16/9" }}
+                />
+              </div>
             </div>
           ) : (
             <p className="text-gray-300">Aucun trailer disponible</p>

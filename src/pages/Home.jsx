@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 export default function Home({ searchQuery }) {
   const [apiData, setApiData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const API_KEY =
     "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNDliZjk3MjViYTcyYWI4Mzk0NzIxODBmY2Q4M2EwZSIsInN1YiI6IjY1ZjM0ZWRlNmRlYTNhMDEyZjc4NTY4ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.QDsTVi9bnC5wV_30oRkMQwXqVGnUDqSYYapGfK5iQFY";
@@ -25,6 +26,7 @@ export default function Home({ searchQuery }) {
         });
         const data = await response.json();
         setApiData(data.results || []);
+        setTotalPages(data.total_pages || 1); // <-- récupère le total de pages
         window.scrollTo(0, 0);
       } catch (error) {
         console.error("Erreur API :", error);
@@ -34,13 +36,64 @@ export default function Home({ searchQuery }) {
     fetchData();
   }, [searchQuery, currentPage]);
 
-  const handleNextPage = () => setCurrentPage((prev) => prev + 1);
-  const handlePreviousPage = () =>
-    setCurrentPage((prev) => (prev > 1 ? prev - 1 : 1));
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const start = Math.floor((currentPage - 1) / 10) * 10 + 1;
+    const end = Math.min(start + 9, totalPages);
+
+    for (let i = start; i <= end; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => setCurrentPage(i)}
+          className={`mx-1 px-3 py-1 rounded ${
+            i === currentPage ? "bg-gray-300 text-black mb-[30px]" : "bg-blue-700 text-white mb-[30px]"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return pageNumbers;
+  };
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 overflow-y-auto p-4">
+   <div className="flex justify-center text-white mb-6 text-sm sm:text-base text-center px-2">
+  Page {currentPage} sur {totalPages}
+</div>
+
+<div className="flex justify-center flex-wrap gap-2 px-2 mb-8">
+  {currentPage > 1 && (
+    <button
+      onClick={handlePreviousPage}
+      className="bg-gray-300 text-black hover:bg-gray-100  px-3 py-1 rounded flex items-center mb-[30px]"
+    >
+      ⬅️ <span className="hidden sm:inline ml-1">Page précédente</span>
+    </button>
+  )}
+
+  {renderPageNumbers()}
+
+  {currentPage < totalPages && (
+    <button
+      onClick={handleNextPage}
+      className="bg-gray-300 text-black hover:bg-gray-100 px-3 py-1 rounded flex items-center mb-[30px]"
+    >
+      <span className="hidden sm:inline mr-1">Page suivante</span> ➡️
+    </button>
+  )}
+</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 overflow-y-auto">
         {apiData.map((movie) => (
           <div
             key={movie.id}
@@ -59,24 +112,41 @@ export default function Home({ searchQuery }) {
               </div>
             </Link>
             <div className="p-4">
-              <h2 className="text-lg font-semibold">{movie.title}</h2>
+              <h2 className="text-lg font-semibold text-red-600 font-[1000]">
+                {movie.title}
+              </h2>
               <p className="text-gray-300">{movie.release_date}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="flex justify-center text-white">Page {currentPage}</div>
-      <div className="flex justify-center mt-4">
-        {currentPage > 1 && (
-          <button onClick={handlePreviousPage} className="text-white mr-4">
-            ⬅️ Page précédente
-          </button>
-        )}
-        <button onClick={handleNextPage} className="text-white">
-          Page suivante ➡️
-        </button>
-      </div>
+
+<div className="flex justify-center text-white mb-6 text-sm sm:text-base text-center px-2">
+  Page {currentPage} sur {totalPages}
+</div>
+
+<div className="flex justify-center flex-wrap gap-2 px-2">
+  {currentPage > 1 && (
+    <button
+      onClick={handlePreviousPage}
+      className="bg-blue-600 hover:bg-blue-800 text-white px-3 py-1 rounded flex items-center mb-[30px]"
+    >
+      ⬅️ <span className="hidden sm:inline ml-1">Page précédente</span>
+    </button>
+  )}
+
+  {renderPageNumbers()}
+
+  {currentPage < totalPages && (
+    <button
+      onClick={handleNextPage}
+      className="bg-blue-600 hover:bg-blue-800 text-white px-3 py-1 rounded flex items-center mb-[30px]"
+    >
+      <span className="hidden sm:inline mr-1">Page suivante</span> ➡️
+    </button>
+  )}
+</div>
     </>
   );
 }
