@@ -14,7 +14,7 @@ export default function Home({ searchQuery }) {
       const endpoint =
         searchQuery.trim() === ""
           ? `https://api.themoviedb.org/3/movie/now_playing?language=fr-FR&page=${currentPage}`
-          : `https://api.themoviedb.org/3/search/movie?language=fr-FR&query=${searchQuery}&page=${currentPage}&include_adult=true`;
+          : `https://api.themoviedb.org/3/search/movie?language=fr-FR&query=${searchQuery}&page=${currentPage}&include_adult=false`;
 
       try {
         const response = await fetch(endpoint, {
@@ -26,7 +26,7 @@ export default function Home({ searchQuery }) {
         });
         const data = await response.json();
         setApiData(data.results || []);
-        setTotalPages(data.total_pages || 1); 
+        setTotalPages(data.total_pages || 1);
         window.scrollTo(0, 0);
       } catch (error) {
         console.error("Erreur API :", error);
@@ -55,7 +55,9 @@ export default function Home({ searchQuery }) {
           key={i}
           onClick={() => setCurrentPage(i)}
           className={`mx-1 px-3 py-1 rounded ${
-            i === currentPage ? "bg-gray-300 text-black mb-[30px]" : "bg-blue-700 text-white mb-[30px]"
+            i === currentPage
+              ? "bg-gray-100 text-black mb-[30px]"
+              : "bg-gray-400 text-black mb-[30px]"
           }`}
         >
           {i}
@@ -68,31 +70,36 @@ export default function Home({ searchQuery }) {
 
   return (
     <>
-   <div className="flex justify-center text-white mb-6 text-sm sm:text-base text-center px-2">
-  Page {currentPage} sur {totalPages}
-</div>
+      <div className="flex justify-center text-white mb-6 text-sm sm:text-base text-center px-2">
+        Page {currentPage} sur {totalPages}
+      </div>
 
-<div className="flex justify-center flex-wrap gap-2 px-2 mb-8">
-  {currentPage > 1 && (
-    <button
-      onClick={handlePreviousPage}
-      className="bg-gray-300 text-black hover:bg-gray-100  px-3 py-1 rounded flex items-center mb-[30px]"
-    >
-      ⬅️ <span className="hidden sm:inline ml-1">Page précédente</span>
-    </button>
-  )}
+      {/* Numéros de pages */}
+      <div className="flex justify-center flex-wrap gap-2 px-2 mb-2">
+        {renderPageNumbers()}
+      </div>
 
-  {renderPageNumbers()}
+      {/* Boutons Previous / Next côte à côte */}
+      <div className="flex justify-center gap-2 px-2 mb-[30px]">
+        {currentPage > 1 && (
+          <button
+            onClick={handlePreviousPage}
+            className="bg-gray-300 text-black hover:bg-gray-100 px-3 py-1 rounded flex items-center"
+          >
+            ⬅️ <span className="hidden sm:inline ml-1">Page précédente</span>
+          </button>
+        )}
 
-  {currentPage < totalPages && (
-    <button
-      onClick={handleNextPage}
-      className="bg-gray-300 text-black hover:bg-gray-100 px-3 py-1 rounded flex items-center mb-[30px]"
-    >
-      <span className="hidden sm:inline mr-1">Page suivante</span> ➡️
-    </button>
-  )}
-</div>
+        {currentPage < totalPages && (
+          <button
+            onClick={handleNextPage}
+            className="bg-gray-300 text-black hover:bg-gray-100 px-3 py-1 rounded flex items-center"
+          >
+            <span className="hidden sm:inline mr-1">Page suivante</span> ➡️
+          </button>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 overflow-y-auto ml-[50px] mr-[50px]">
         {apiData.map((movie) => (
           <div
@@ -112,7 +119,7 @@ export default function Home({ searchQuery }) {
               </div>
             </Link>
             <div className="p-4">
-              <h2 className="text-lg font-semibold text-red-600 font-[1000]">
+              <h2 className="text-lg text-red-600 font-[1000]">
                 {movie.title}
               </h2>
               <p className="text-gray-300">{movie.release_date}</p>
@@ -121,32 +128,35 @@ export default function Home({ searchQuery }) {
         ))}
       </div>
 
+      <div className="flex justify-center text-white mb-6 text-sm sm:text-base text-center px-2">
+        Page {currentPage} sur {totalPages}
+      </div>
 
-<div className="flex justify-center text-white mb-6 text-sm sm:text-base text-center px-2">
-  Page {currentPage} sur {totalPages}
-</div>
+      {/* Numéros de pages */}
+      <div className="flex justify-center flex-wrap gap-2 px-2 mb-2">
+        {renderPageNumbers()}
+      </div>
 
-<div className="flex justify-center flex-wrap gap-2 px-2">
-  {currentPage > 1 && (
-    <button
-      onClick={handlePreviousPage}
-      className="bg-blue-600 hover:bg-blue-800 text-white px-3 py-1 rounded flex items-center mb-[30px]"
-    >
-      ⬅️ <span className="hidden sm:inline ml-1">Page précédente</span>
-    </button>
-  )}
+      {/* Boutons Previous / Next côte à côte */}
+      <div className="flex justify-center gap-2 px-2 mb-[30px]">
+        {currentPage > 1 && (
+          <button
+            onClick={handlePreviousPage}
+            className="bg-gray-300 text-black hover:bg-gray-100 px-3 py-1 rounded flex items-center"
+          >
+            ⬅️ <span className="hidden sm:inline ml-1">Page précédente</span>
+          </button>
+        )}
 
-  {renderPageNumbers()}
-
-  {currentPage < totalPages && (
-    <button
-      onClick={handleNextPage}
-      className="bg-blue-600 hover:bg-blue-800 text-white px-3 py-1 rounded flex items-center mb-[30px]"
-    >
-      <span className="hidden sm:inline mr-1">Page suivante</span> ➡️
-    </button>
-  )}
-</div>
+        {currentPage < totalPages && (
+          <button
+            onClick={handleNextPage}
+            className="bg-gray-300 text-black hover:bg-gray-100 px-3 py-1 rounded flex items-center"
+          >
+            <span className="hidden sm:inline mr-1">Page suivante</span> ➡️
+          </button>
+        )}
+      </div>
     </>
   );
 }
