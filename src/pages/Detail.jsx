@@ -64,7 +64,7 @@ export default function Detail() {
   return (
     <div className=" grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 bg-gray-900  ">
       <div className="flex justify-center">
-        <p className="text-lg font-semibold text-red-600 mt-6 font-[1000]">
+        <p className="text-lg text-red-600 mt-6 font-[1000]">
           {movie.title}
         </p>
       </div>
@@ -85,12 +85,16 @@ export default function Detail() {
 
       <div className="ml-8">
         <div className="">
-          <p className="text-lg font-semibold text-white text-red-600 font-[1000]">Date de sortie : </p>
+          <p className="text-lg text-red-600 font-[1000]">
+            Date de sortie :{" "}
+          </p>
           <p className="text-gray-300">{movie.release_date}</p>
         </div>
         <br />
         <div className="">
-          <p className="text-lg font-semibold text-white text-red-600 font-[1000]">Genre : </p>
+          <p className="text-lg text-red-600 font-[1000]">
+            Genre :{" "}
+          </p>
 
           {movie.genres &&
             movie.genres.map((genre) => (
@@ -101,12 +105,14 @@ export default function Detail() {
         </div>
         <br />
         <div className="">
-          <p className="text-lg font-semibold text-white text-red-600 font-[1000]">Synopsis :</p>
+          <p className="text-lg text-red-600 font-[1000]">
+            Synopsis :
+          </p>
           <p className="text-gray-300 me-8">{movie.overview}</p>
         </div>
         <br />
         <div className="">
-          <p className="text-lg font-semibold text-white text-red-600 font-[1000]">
+          <p className="text-lg text-red-600 font-[1000]">
             Compagnie de production :
           </p>
           {movie.production_companies && movie.production_companies[1] && (
@@ -117,7 +123,7 @@ export default function Detail() {
         </div>
         <br />
         <div className=" ">
-          <p className="text-lg font-semibold text-white text-red-600 font-[1000]">
+          <p className="text-lg text-red-600 font-[1000]">
             Pays de production:
           </p>
           {movie.production_countries && movie.production_countries[0] && (
@@ -127,7 +133,9 @@ export default function Detail() {
           )}
         </div>
         <div className="mb-[50px] me-[30px]">
-          <p className="text-lg font-semibold text-white text-red-600 font-[1000]">Trailer : </p>
+          <p className="text-lg text-red-600 font-[1000]">
+            Trailer :{" "}
+          </p>
           {trailer ? (
             <div className="aspect-w-16 aspect-h-9">
               <div className="relative pt-[56.25%]">
@@ -146,6 +154,26 @@ export default function Detail() {
           ) : (
             <p className="text-gray-300">Aucun trailer disponible</p>
           )}
+        </div>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-11">
+          <a
+            href={`https://www.themoviedb.org/movie/${movie.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center"
+          >
+            Voir sur TMDB
+          </a>
+          <a
+            href={`https://www.justwatch.com/fr/recherche?q=${encodeURIComponent(
+              movie.title
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-center"
+          >
+            Où le regarder ?
+          </a>
         </div>
       </div>
     </div>

@@ -2,15 +2,19 @@ import { Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import Home from "./pages/Home.jsx";
 import Affiche from "./pages/Affiche.jsx";
-import Classes from "./pages/Classes.jsx";
 import Detail from "./pages/Detail.jsx";
 import Nav from "./components/Nav";
+import { useNavigate } from "react-router-dom";
 
 export default function App() {
+  
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+  
   const handleSearchChange = (e) => setSearchQuery(e.target.value);
   const handleSearchSubmit = (e) => {
     e.preventDefault();
+    navigate("/");
   };
   return (
     <>
@@ -23,7 +27,6 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home searchQuery={searchQuery} />} />
           <Route path="/affiche" element={<Affiche />} />
-          <Route path="/classes" element={<Classes />} />
           <Route path="/detail/:id" element={<Detail />} />
         </Routes>
       </div>

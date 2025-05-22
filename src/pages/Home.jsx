@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function Home({ searchQuery }) {
@@ -14,7 +14,7 @@ export default function Home({ searchQuery }) {
       const endpoint =
         searchQuery.trim() === ""
           ? `https://api.themoviedb.org/3/movie/now_playing?language=fr-FR&page=${currentPage}`
-          : `https://api.themoviedb.org/3/search/movie?language=fr-FR&query=${searchQuery}&page=${currentPage}&include_adult=false`;
+          : `https://api.themoviedb.org/3/search/movie?language=fr-FR&query=${searchQuery}&page=${currentPage}&include_adult=true`;
 
       try {
         const response = await fetch(endpoint, {
@@ -26,7 +26,7 @@ export default function Home({ searchQuery }) {
         });
         const data = await response.json();
         setApiData(data.results || []);
-        setTotalPages(data.total_pages || 1); // <-- récupère le total de pages
+        setTotalPages(data.total_pages || 1); 
         window.scrollTo(0, 0);
       } catch (error) {
         console.error("Erreur API :", error);
@@ -93,7 +93,7 @@ export default function Home({ searchQuery }) {
     </button>
   )}
 </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 overflow-y-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 overflow-y-auto ml-[50px] mr-[50px]">
         {apiData.map((movie) => (
           <div
             key={movie.id}
