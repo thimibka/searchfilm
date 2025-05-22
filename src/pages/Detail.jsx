@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import ReactPlayer from "react-player";
 
 export default function Detail() {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
+  const [videos, setVideos] = useState([]);
 
   useEffect(() => {
     fetchMovieDetails();
+    fetchMovieVideos();
   }, [id]);
 
   async function fetchMovieDetails() {
@@ -24,7 +27,6 @@ export default function Detail() {
       );
 
       const data = await response.json();
-      console.log(data);
       setMovie(data);
     } catch (error) {
       console.error(
@@ -33,11 +35,32 @@ export default function Detail() {
       );
     }
   }
+  async function fetchMovieVideos() {
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/movie/${id}/videos?language=fr-FR`,
+        {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNDliZjk3MjViYTcyYWI4Mzk0NzIxODBmY2Q4M2EwZSIsInN1YiI6IjY1ZjM0ZWRlNmRlYTNhMDEyZjc4NTY4ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.QDsTVi9bnC5wV_30oRkMQwXqVGnUDqSYYapGfK5iQFY",
+          },
+        }
+      );
 
+      const data = await response.json();
+      setVideos(data.results);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des vidéos:", error);
+    }
+  }
   if (!movie) {
     return <div>Loading...</div>;
   }
-
+  const trailer = videos.find(
+    (video) => video.type === "Trailer" && video.site === "YouTube"
+  );
   return (
     <div className=" grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 bg-gray-900  ">
       <div className="flex justify-center">
@@ -97,6 +120,21 @@ export default function Detail() {
             <p className="text-gray-300">
               {movie.production_countries[0].name}
             </p>
+          )}
+        </div>
+        <div className="">
+          <p className="text-lg font-semibold text-white">Trailer : </p>
+          {trailer ? (
+            <div className="mt-4">
+              <ReactPlayer
+                url={`https://www.youtube.com/watch?v=${trailer.key}`}
+                controls
+                width="100%"
+                height="1000px"
+              />
+            </div>
+          ) : (
+            <p className="text-gray-300">Aucun trailer disponible</p>
           )}
         </div>
       </div>

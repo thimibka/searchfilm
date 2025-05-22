@@ -1,18 +1,32 @@
 import { Routes, Route } from "react-router-dom";
+import { useState } from "react";
 import Home from "./pages/Home.jsx";
 import Affiche from "./pages/Affiche.jsx";
 import Classes from "./pages/Classes.jsx";
 import Detail from "./pages/Detail.jsx";
+import Nav from "./components/Nav";
 
 export default function App() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const handleSearchChange = (e) => setSearchQuery(e.target.value);
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+  };
   return (
-    <div className="App bg-slate-600">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/affiche" element={<Affiche />} />
-        <Route path="/classes" element={<Classes />} />
-        <Route path="/detail/:id" element={<Detail />} />
-      </Routes>
-    </div>
+    <>
+      <Nav
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+        onSearchSubmit={handleSearchSubmit}
+      />
+      <div className="App bg-slate-600">
+        <Routes>
+          <Route path="/" element={<Home searchQuery={searchQuery} />} />
+          <Route path="/affiche" element={<Affiche />} />
+          <Route path="/classes" element={<Classes />} />
+          <Route path="/detail/:id" element={<Detail />} />
+        </Routes>
+      </div>
+    </>
   );
 }

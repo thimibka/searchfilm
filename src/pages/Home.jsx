@@ -1,132 +1,47 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-export default function Home() {
+export default function Home({ searchQuery }) {
   const [apiData, setApiData] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  useEffect(() => {
-    fetchData(currentPage);
-    window.scrollTo(0, 0);
-  }, [currentPage]);
 
-  async function fetchData(page) {
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/movie/now_playing?language=fr-FR&page=${page}`,
-        {
+  const API_KEY =
+    "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNDliZjk3MjViYTcyYWI4Mzk0NzIxODBmY2Q4M2EwZSIsInN1YiI6IjY1ZjM0ZWRlNmRlYTNhMDEyZjc4NTY4ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.QDsTVi9bnC5wV_30oRkMQwXqVGnUDqSYYapGfK5iQFY";
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const endpoint =
+        searchQuery.trim() === ""
+          ? `https://api.themoviedb.org/3/movie/now_playing?language=fr-FR&page=${currentPage}`
+          : `https://api.themoviedb.org/3/search/movie?language=fr-FR&query=${searchQuery}&page=${currentPage}&include_adult=false`;
+
+      try {
+        const response = await fetch(endpoint, {
           method: "GET",
           headers: {
             accept: "application/json",
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNDliZjk3MjViYTcyYWI4Mzk0NzIxODBmY2Q4M2EwZSIsInN1YiI6IjY1ZjM0ZWRlNmRlYTNhMDEyZjc4NTY4ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.QDsTVi9bnC5wV_30oRkMQwXqVGnUDqSYYapGfK5iQFY",
+            Authorization: API_KEY,
           },
-        }
-      );
-      const data = await response.json();
-      setApiData(data.results);
-    } catch (error) {
-      console.error(
-        "Erreur lors de la récupération des données de l'API:",
-        error
-      );
-    }
-  }
-  function handleNextPage() {
-    setCurrentPage(currentPage + 1);
-  }
-  function handlePreviousPage() {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  }
-  function handleSearchChange(event) {
-    setSearchTerm(event.target.value);
-  }
-  // async function handleSearchSubmit(event) {
-  //   event.preventDefault();
-  //   const allMovies = await fetchAllMovies();
-  //   setSearchQuery(searchTerm);
-  //   setApiData(allMovies);
-  // }
-  async function handleSearchSubmit(event) {
-    event.preventDefault();
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/search/movie?language=fr-FR&query=${searchTerm}&page=1&include_adult=false`,
-        {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNDliZjk3MjViYTcyYWI4Mzk0NzIxODBmY2Q4M2EwZSIsInN1YiI6IjY1ZjM0ZWRlNmRlYTNhMDEyZjc4NTY4ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.QDsTVi9bnC5wV_30oRkMQwXqVGnUDqSYYapGfK5iQFY",
-          },
-        }
-      );
-      const data = await response.json();
-      setApiData(data.results);
-      setSearchQuery(searchTerm);
-    } catch (error) {
-      console.error(
-        "Erreur lors de la récupération des données de l'API pour la recherche:",
-        error
-      );
-    }
-  }
-  const filteredMovies = apiData.filter(
-    (movie) =>
-      movie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      movie.release_date.includes(searchQuery)
-  );
+        });
+        const data = await response.json();
+        setApiData(data.results || []);
+        window.scrollTo(0, 0);
+      } catch (error) {
+        console.error("Erreur API :", error);
+      }
+    };
+
+    fetchData();
+  }, [searchQuery, currentPage]);
+
+  const handleNextPage = () => setCurrentPage((prev) => prev + 1);
+  const handlePreviousPage = () =>
+    setCurrentPage((prev) => (prev > 1 ? prev - 1 : 1));
+
   return (
     <>
-      <div className="flex justify-between items-center bg-gray-800 p-4">
-        <div>
-          <h1 className="text-white text-2xl font-bold">Mon Application</h1>
-        </div>
-        <div className="block lg:hidden">
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="text-white focus:outline-none"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            </svg>
-          </button>
-        </div>
-        <div
-          className={`lg:flex lg:items-center ${menuOpen ? "block" : "hidden"}`}
-        >
-          <div className="flex flex-col lg:flex-row lg:space-x-4">
-            <div>
-              <form onSubmit={handleSearchSubmit}>
-                <input
-                  type="text"
-                  placeholder="Rechercher..."
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  className="px-2 py-1 border border-gray-600 rounded text-gray-800 focus:outline-none"
-                />
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-3 overflow-y-auto">
-        {filteredMovies.map((movie) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 overflow-y-auto p-4">
+        {apiData.map((movie) => (
           <div
             key={movie.id}
             className="flex flex-col bg-gray-900 text-white rounded overflow-hidden"
@@ -137,67 +52,30 @@ export default function Home() {
               className="w-full h-auto object-cover"
             />
             <Link to={`/detail/${movie.id}`}>
-              <div className="flex justify-center">
-                <button>Detail</button>
-              </div>{" "}
+              <div className="flex justify-center p-2">
+                <button className="bg-blue-600 hover:bg-blue-800 text-white px-4 py-1 rounded">
+                  Détail
+                </button>
+              </div>
             </Link>
             <div className="p-4">
-              <h2 className="text-lg font-semibold text-white">
-                {movie.title}
-              </h2>
-
+              <h2 className="text-lg font-semibold">{movie.title}</h2>
               <p className="text-gray-300">{movie.release_date}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="flex justify-center">
-        <p className="text-white"> Page {currentPage}</p>
-      </div>
+      <div className="flex justify-center text-white">Page {currentPage}</div>
       <div className="flex justify-center mt-4">
         {currentPage > 1 && (
-          <button
-            onClick={() => setCurrentPage(currentPage - 1)}
-            className="text-white flex direction-row mr-2"
-          >
-            <svg
-              className="w-8 h-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            <p className="flex justify-center text-white">Page précédente</p>
+          <button onClick={handlePreviousPage} className="text-white mr-4">
+            ⬅️ Page précédente
           </button>
         )}
-        <button
-          onClick={handleNextPage}
-          className="text-white flex direction-row"
-        >
-          <p className="flex justify-center text-white">Page suivante</p>
-          <svg
-            className="w-8 h-8"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>{" "}
+        <button onClick={handleNextPage} className="text-white">
+          Page suivante ➡️
+        </button>
       </div>
     </>
   );
