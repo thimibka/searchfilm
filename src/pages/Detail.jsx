@@ -155,7 +155,7 @@ export default function Detail() {
             <p className="text-gray-300">Aucun trailer disponible</p>
           )}
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-11">
+        <div className="flex flex-col sm:flex-row gap-4 mb-11 m-20">
           <a
             href={`https://www.themoviedb.org/movie/${movie.id}`}
             target="_blank"
@@ -170,7 +170,7 @@ export default function Detail() {
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-center"
+            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded text-center"
           >
             Où le regarder ?
           </a>

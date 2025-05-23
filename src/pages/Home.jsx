@@ -138,11 +138,11 @@ export default function Home({ searchQuery }) {
       </div>
 
       {/* Boutons Previous / Next côte à côte */}
-      <div className="flex justify-center gap-2 px-2 mb-[30px]">
+      <div className="flex justify-center gap-2 px-2">
         {currentPage > 1 && (
           <button
             onClick={handlePreviousPage}
-            className="bg-gray-300 text-black hover:bg-gray-100 px-3 py-1 rounded flex items-center"
+            className="bg-gray-300 text-black hover:bg-gray-100 px-3 py-1 rounded flex items-center mb-[10px]"
           >
             ⬅️ <span className="hidden sm:inline ml-1">Page précédente</span>
           </button>
@@ -151,7 +151,7 @@ export default function Home({ searchQuery }) {
         {currentPage < totalPages && (
           <button
             onClick={handleNextPage}
-            className="bg-gray-300 text-black hover:bg-gray-100 px-3 py-1 rounded flex items-center"
+            className="bg-gray-300 text-black hover:bg-gray-100 px-3 py-1 rounded flex items-center mb-[10px]"
           >
             <span className="hidden sm:inline mr-1">Page suivante</span> ➡️
           </button>
