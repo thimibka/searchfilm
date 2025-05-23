@@ -6,6 +6,8 @@ import Detail from "./pages/Detail.jsx";
 import Nav from "./components/Nav";
 import { useNavigate } from "react-router-dom";
 import Genre from "./pages/Genre";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -16,18 +18,42 @@ export default function App() {
     e.preventDefault();
     navigate("/");
   };
+  const location = useLocation();
+
+  useEffect(() => {
+    const isDetailPage = location.pathname.startsWith("/detail");
+    const isHomeWithSearch = location.pathname === "/" && searchQuery !== "";
+
+    if (!isDetailPage && !isHomeWithSearch) {
+      setSearchQuery("");
+    }
+  }, [location.pathname]);
+
+  const navigateAndClearSearch = (path) => {
+  setSearchQuery("");
+  navigate(path);
+};
   return (
     <>
       <Nav
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
         onSearchSubmit={handleSearchSubmit}
+          navigateAndClearSearch={navigateAndClearSearch}
       />
       <div className="App bg-slate-600">
         <Routes>
-          <Route path="/" element={<Home searchQuery={searchQuery} />} />
+          <Route
+            path="/"
+            element={
+              <Home searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+            }
+          />
           <Route path="/affiche" element={<Affiche />} />
-          <Route path="/detail/:id" element={<Detail />} />
+          <Route
+            path="/detail/:id"
+            element={<Detail setSearchQuery={setSearchQuery} />}
+          />
           <Route path="/genre/:id" element={<Genre />} />
         </Routes>
       </div>

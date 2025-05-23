@@ -1,16 +1,31 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import ReactPlayer from "react-player";
 
-export default function Detail() {
+export default function Detail({ setSearchQuery }) {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [videos, setVideos] = useState([]);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const fromPage = location.state?.fromPage || 1;
+  const scrollY = location.state?.scrollY || 0;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     fetchMovieDetails();
     fetchMovieVideos();
   }, [id]);
+
+  useEffect(() => {
+    if (setSearchQuery) {
+      setSearchQuery("");
+    }
+  }, [setSearchQuery]);
 
   async function fetchMovieDetails() {
     try {
@@ -62,110 +77,122 @@ export default function Detail() {
     (video) => video.type === "Trailer" && video.site === "YouTube"
   );
   return (
-    <div className=" grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 bg-gray-900  ">
-      <div className="flex justify-center">
-        <p className="text-lg text-red-600 mt-6 font-[1000]">{movie.title}</p>
-      </div>
-      <div className="mb-2">
-        {movie.poster_path && (
-          <img
-            src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
-            alt={movie.title}
-            className="mx-auto mt-4 mb-8"
-            style={{ maxWidth: "300px" }}
-          />
-        )}
-      </div>
-
-      <h1 className="text-red-600 flex justify-center font-[1000] mb-8">
-        {movie.tagline}
-      </h1>
-
-      <div className="ml-8">
-        <div className="">
-          <p className="text-lg text-red-600 font-[1000]">Date de sortie : </p>
-          <p className="text-gray-300">{movie.release_date}</p>
+    <>
+      <button
+        onClick={() => {
+          navigate(`/?page=${fromPage}`, { state: { scrollY } });
+        }}
+        className="mt-4 bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-100"
+      >
+        ⬅️ Retour à la page {fromPage}
+      </button>
+      <div className=" grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 bg-gray-900  ">
+        <div className="flex justify-center">
+          <p className="text-lg text-red-600 mt-6 font-[1000]">{movie.title}</p>
         </div>
-        <br />
-        <div className="">
-          <p className="text-lg text-red-600 font-[1000]">Genre : </p>
+        <div className="mb-2">
+          {movie.poster_path && (
+            <img
+              src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
+              alt={movie.title}
+              className="mx-auto mt-4 mb-8"
+              style={{ maxWidth: "300px" }}
+            />
+          )}
+        </div>
 
-          {movie.genres &&
-            movie.genres.map((genre) => (
-              <p key={genre.id} className="text-gray-300">
-                {genre.name}
+        <h1 className="text-red-600 flex justify-center font-[1000] mb-8">
+          {movie.tagline}
+        </h1>
+
+        <div className="ml-8">
+          <div className="">
+            <p className="text-lg text-red-600 font-[1000]">
+              Date de sortie :{" "}
+            </p>
+            <p className="text-gray-300">{movie.release_date}</p>
+          </div>
+          <br />
+          <div className="">
+            <p className="text-lg text-red-600 font-[1000]">Genre : </p>
+
+            {movie.genres &&
+              movie.genres.map((genre) => (
+                <p key={genre.id} className="text-gray-300">
+                  {genre.name}
+                </p>
+              ))}
+          </div>
+          <br />
+          <div className="">
+            <p className="text-lg text-red-600 font-[1000]">Synopsis :</p>
+            <p className="text-gray-300 me-8">{movie.overview}</p>
+          </div>
+          <br />
+          <div className="">
+            <p className="text-lg text-red-600 font-[1000]">
+              Compagnie de production :
+            </p>
+            {movie.production_companies && movie.production_companies[1] && (
+              <p className="text-gray-300">
+                {movie.production_companies[1].name}
               </p>
-            ))}
-        </div>
-        <br />
-        <div className="">
-          <p className="text-lg text-red-600 font-[1000]">Synopsis :</p>
-          <p className="text-gray-300 me-8">{movie.overview}</p>
-        </div>
-        <br />
-        <div className="">
-          <p className="text-lg text-red-600 font-[1000]">
-            Compagnie de production :
-          </p>
-          {movie.production_companies && movie.production_companies[1] && (
-            <p className="text-gray-300">
-              {movie.production_companies[1].name}
+            )}
+          </div>
+          <br />
+          <div className=" ">
+            <p className="text-lg text-red-600 font-[1000]">
+              Pays de production:
             </p>
-          )}
-        </div>
-        <br />
-        <div className=" ">
-          <p className="text-lg text-red-600 font-[1000]">
-            Pays de production:
-          </p>
-          {movie.production_countries && movie.production_countries[0] && (
-            <p className="text-gray-300">
-              {movie.production_countries[0].name}
-            </p>
-          )}
-        </div>
-        <div className="mb-[50px] me-[30px]">
-          <p className="text-lg text-red-600 font-[1000]">Trailer : </p>
-          {trailer ? (
-            <div className="aspect-w-16 aspect-h-9">
-              <div className="relative pt-[56.25%]">
-                {" "}
-                {/* 16:9 aspect ratio */}
-                <ReactPlayer
-                  url={`https://www.youtube.com/watch?v=${trailer.key}`}
-                  controls
-                  width="100%"
-                  height="100%"
-                  className="absolute top-0 left-0"
-                  style={{ aspectRatio: "16/9" }}
-                />
+            {movie.production_countries && movie.production_countries[0] && (
+              <p className="text-gray-300">
+                {movie.production_countries[0].name}
+              </p>
+            )}
+          </div>
+          <div className="mb-[50px] me-[30px]">
+            <p className="text-lg text-red-600 font-[1000]">Trailer : </p>
+            {trailer ? (
+              <div className="aspect-w-16 aspect-h-9">
+                <div className="relative pt-[56.25%]">
+                  {" "}
+                  {/* 16:9 aspect ratio */}
+                  <ReactPlayer
+                    url={`https://www.youtube.com/watch?v=${trailer.key}`}
+                    controls
+                    width="100%"
+                    height="100%"
+                    className="absolute top-0 left-0"
+                    style={{ aspectRatio: "16/9" }}
+                  />
+                </div>
               </div>
-            </div>
-          ) : (
-            <p className="text-gray-300">Aucun trailer disponible</p>
-          )}
-        </div>
-        <div className="flex flex-col items-center sm:flex-row sm:justify-center gap-4 mb-11 m-20">
-          <a
-            href={`https://www.themoviedb.org/movie/${movie.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center p-4"
-          >
-            Voir sur TMDB
-          </a>
-          <a
-            href={`https://www.justwatch.com/fr/recherche?q=${encodeURIComponent(
-              movie.title
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded text-center p-4"
-          >
-            Où le regarder ?
-          </a>
+            ) : (
+              <p className="text-gray-300">Aucun trailer disponible</p>
+            )}
+          </div>
+          <div className="flex flex-col items-center sm:flex-row sm:justify-center gap-4 mb-11 m-20">
+            <a
+              href={`https://www.themoviedb.org/movie/${movie.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center p-4"
+            >
+              Voir sur TMDB
+            </a>
+            <a
+              href={`https://www.justwatch.com/fr/recherche?q=${encodeURIComponent(
+                movie.title
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded text-center p-4"
+            >
+              Où le regarder ?
+            </a>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,13 +1,27 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Home({ searchQuery }) {
+  const location = useLocation();
+  const initialPage = new URLSearchParams(location.search).get("page");
   const [apiData, setApiData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(
+    initialPage ? parseInt(initialPage) : 1
+  );
   const [totalPages, setTotalPages] = useState(1);
 
   const API_KEY =
     "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNDliZjk3MjViYTcyYWI4Mzk0NzIxODBmY2Q4M2EwZSIsInN1YiI6IjY1ZjM0ZWRlNmRlYTNhMDEyZjc4NTY4ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.QDsTVi9bnC5wV_30oRkMQwXqVGnUDqSYYapGfK5iQFY";
+
+  useEffect(() => {
+    if (location.state?.scrollY) {
+      setTimeout(() => {
+        window.scrollTo(0, location.state.scrollY);
+      }, 100);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -111,7 +125,10 @@ export default function Home({ searchQuery }) {
               alt={movie.title}
               className="w-full h-auto object-cover"
             />
-            <Link to={`/detail/${movie.id}`}>
+            <Link
+              to={`/detail/${movie.id}`}
+              state={{ fromPage: currentPage, scrollY: window.scrollY }}
+            >
               <div className="flex justify-center p-2">
                 <button className="bg-blue-600 hover:bg-blue-800 text-white px-4 py-1 rounded">
                   Détail
