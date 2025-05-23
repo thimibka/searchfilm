@@ -28,7 +28,7 @@ export default function Home({ searchQuery }) {
       const endpoint =
         searchQuery.trim() === ""
           ? `https://api.themoviedb.org/3/movie/now_playing?language=fr-FR&page=${currentPage}`
-          : `https://api.themoviedb.org/3/search/movie?language=fr-FR&query=${searchQuery}&page=${currentPage}&include_adult=false`;
+          : `https://api.themoviedb.org/3/search/movie?language=fr-FR&query=${searchQuery}&page=${currentPage}&include_adult=true`;
 
       try {
         const response = await fetch(endpoint, {
